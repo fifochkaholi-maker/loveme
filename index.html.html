@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>loved by others</title>
+    <style>
+        :root {
+            --bg: #030306;
+            --text: #e8e8e8;
+            --glitch-1: #00f3ff;
+            --glitch-2: #ff00aa;
+            --glitch-3: #ffcc00;
+            --glitch-4: #7b00ff;
+            --heart: #ff3366;
+            --smoke-base: rgba(140, 130, 160, 0.06);
+            --smoke-highlight: rgba(200, 180, 220, 0.04);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @media (hover: hover) and (pointer: fine) { * { cursor: none; } }
+
+        body, html {
+            width: 100%; height: 100%;
+            min-height: -webkit-fill-available;
+            background: var(--bg);
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        /* === 🌫️ УСИЛЕННЫЙ ДЫМОВЫЙ ФОН === */
+        .smoke-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* Базовый слой дыма — мягкое свечение */
+        .smoke-base-layer {
+            position: absolute;
+            width: 200%; height: 200%;
+            top: -50%; left: -50%;
+            background: 
+                radial-gradient(ellipse at 30% 70%, var(--smoke-base) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 30%, var(--smoke-base) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 50%, var(--smoke-highlight) 0%, transparent 70%);
+            animation: smoke-base-drift 40s ease-in-out infinite;
+            filter: blur(60px);
+            opacity: 0.8;
+        }
+
+        /* Второй слой — более плотный, с цветными акцентами */
+        .smoke-color-layer {
+            position: absolute;
+            width: 180%; height: 180%;
+            top: -40%; left: -40%;
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(123, 0, 255, 0.08) 0%, transparent 55%),
+                radial-gradient(ellipse at 85% 25%, rgba(255, 0, 170, 0.06) 0%, transparent 55%),
+                radial-gradient(ellipse at 45% 55%, rgba(0, 243, 255, 0.04) 0%, transparent 65%);
+            animation: smoke-color-drift 55s ease-in-out infinite reverse;
+            filter: blur(80px);
+            opacity: 0.6;
+            mix-blend-mode: screen;
+        }
+
+        /* Третий слой — турбулентность, "вихри" */
+        .smoke-turbulence {
+            position: absolute;
+            width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 15% 40%, rgba(255,255,255,0.03) 0%, transparent 30%),
+                radial-gradient(circle at 85% 60%, rgba(255,255,255,0.025) 0%, transparent 35%),
+                radial-gradient(circle at 50% 20%, rgba(255,255,255,0.02) 0%, transparent 40%);
+            animation: smoke-turbulence-spin 70s linear infinite;
+            filter: blur(30px);
+            opacity: 0.7;
+        }
+
+        /* Четвёртый слой — частицы/пыль в дыму */
+        .smoke-particles {
+            position: absolute;
+            width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.4) 50%, transparent),
+                radial-gradient(2px 2px at 45% 70%, rgba(255,255,255,0.3) 50%, transparent),
+                radial-gradient(2px 2px at 75% 25%, rgba(255,255,255,0.35) 50%, transparent),
+                radial-gradient(2px 2px at 35% 85%, rgba(255,255,255,0.25) 50%, transparent),
+                radial-gradient(2px 2px at 90% 50%, rgba(255,255,255,0.3) 50%, transparent);
+            background-repeat: repeat;
+            background-size: 300px 300px;
+            animation: particles-float 25s ease-in-out infinite;
+            opacity: 0.5;
+            filter: blur(0.5px);
+        }
+
+        @keyframes smoke-base-drift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            25% { transform: translate(8%, -12%) rotate(1.5deg) scale(1.03); }
+            50% { transform: translate(15%, 8%) rotate(-0.8deg) scale(0.98); }
+            75% { transform: translate(-10%, 14%) rotate(0.5deg) scale(1.02); }
+        }
+
+        @keyframes smoke-color-drift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-12%, 6%) rotate(-2deg) scale(1.05); }
+            66% { transform: translate(8%, -10%) rotate(2.5deg) scale(0.97); }
+        }
+
+        @keyframes smoke-turbulence-spin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.02); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes particles-float {
+            0%, 100% { background-position: 0 0, 30px 50px, 60px 20px, 15px 80px, 90px 40px; }
+            25% { background-position: -20px 15px, 10px 65px, 40px 5px, -5px 95px, 70px 55px; }
+            50% { background-position: -40px 30px, -10px 80px, 20px -10px, -25px 110px, 50px 70px; }
+            75% { background-position: -20px 45px, 10px 95px, 40px 15px, -5px 125px, 70px 85px; }
+        }
+
+        /* Пульсация всего дыма — "дыхание" */
+        @media not (prefers-reduced-motion: reduce) {
+            .smoke-container::after {
+                content: '';
+                position: absolute;
+                top: 0; left: 0;
+                width: 100%; height: 100%;
+                background: radial-gradient(ellipse at center, 
+                    rgba(123, 0, 255, 0.04) 0%, 
+                    rgba(255, 0, 170, 0.02) 30%,
+                    transparent 75%);
+                animation: smoke-breath 12s ease-in-out infinite;
+                pointer-events: none;
+                mix-blend-mode: soft-light;
+            }
+            @keyframes smoke-breath {
+                0%, 100% { opacity: 0.4; transform: scale(1); }
+                50% { opacity: 0.75; transform: scale(1.08); }
+            }
+        }
+
+        /* === Курсор === */
+        @media (hover: hover) and (pointer: fine) {
+            .cursor, .cursor-dot {
+                position: fixed; pointer-events: none; z-index: 100;
+            }
+            .cursor {
+                width: 28px; height: 28px;
+                transform: translate(-50%, -50%);
+                font-size: 24px; color: var(--heart);
+                text-shadow: 0 0 15px rgba(255, 51, 102, 0.8), 
+                            0 0 30px rgba(255, 51, 102, 0.5),
+                            0 0 45px rgba(0, 243, 255, 0.3);
+                animation: heartbeat 0.8s ease-in-out infinite;
+                transition: transform 0.1s ease, color 0.15s, text-shadow 0.15s;
+                filter: drop-shadow(0 0 10px var(--heart));
+            }
+            .cursor.hover {
+                transform: translate(-50%, -50%) scale(1.6);
+                color: #fff;
+                text-shadow: 0 0 20px var(--heart), 
+                            0 0 40px var(--glitch-1), 
+                            0 0 60px var(--glitch-2),
+                            0 0 80px var(--glitch-4);
+                animation: cursor-glitch 0.15s steps(2) infinite;
+            }
+            .cursor-dot {
+                width: 4px; height: 4px;
+                background: var(--heart); border-radius: 50%;
+                transform: translate(-50%, -50%); z-index: 101;
+                box-shadow: 0 0 10px var(--heart), 0 0 20px var(--glitch-1);
+                animation: dot-pulse 1s ease-in-out infinite;
+            }
+        }
+        @media (hover: none), (pointer: coarse) {
+            .cursor, .cursor-dot { display: none !important; }
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            14% { transform: translate(-50%, -50%) scale(1.2); }
+            28% { transform: translate(-50%, -50%) scale(1); }
+            42% { transform: translate(-50%, -50%) scale(1.15); }
+            70% { transform: translate(-50%, -50%) scale(1); }
+        }
+        @keyframes cursor-glitch {
+            0% { transform: translate(-50%, -50%) scale(1.6); }
+            25% { transform: translate(-48%, -52%) scale(1.7); }
+            50% { transform: translate(-52%, -48%) scale(1.5); }
+            75% { transform: translate(-49%, -51%) scale(1.65); }
+            100% { transform: translate(-50%, -50%) scale(1.6); }
+        }
+        @keyframes dot-pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--heart); }
+            50% { opacity: 0.7; box-shadow: 0 0 25px var(--glitch-1), 0 0 40px var(--glitch-2); }
+        }
+
+        /* === Фоновые надписи === */
+        .background-text-layer {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; z-index: 3;
+            pointer-events: none; overflow: hidden;
+        }
+        .floating-text {
+            position: absolute; color: var(--text);
+            white-space: nowrap; opacity: 0;
+            font-size: 0.9rem; letter-spacing: 0.05em;
+            text-transform: lowercase;
+            animation: float-fade linear infinite;
+            text-shadow: 0 0 10px rgba(255,255,255,0.1);
+        }
+        @keyframes float-fade {
+            0% { opacity: 0; transform: translateY(20px) scale(0.9); }
+            15% { opacity: var(--target-opacity); transform: translateY(0) scale(1); }
+            85% { opacity: var(--target-opacity); transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-20px) scale(1.1); }
+        }
+
+        /* === Зернистость + шум === */
+        .grain-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; pointer-events: none; z-index: 12;
+            opacity: 0.07;
+            background-image: url("image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.8 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            animation: grain-move 0.25s steps(1) infinite;
+            mix-blend-mode: overlay;
+        }
+        @keyframes grain-move {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(-3px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, -3px); }
+            80% { transform: translate(3px, 1px); }
+        }
+
+        .vignette {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, 
+                transparent 0%, transparent 20%, 
+                rgba(3,3,6,0.5) 50%, rgba(1,1,3,0.9) 80%, rgba(0,0,0,0.98) 100%);
+            z-index: 6; pointer-events: none;
+        }
+
+        @media not (prefers-reduced-motion: reduce) {
+            .scanlines {
+                position: fixed; top: 0; left: 0;
+                width: 100%; height: 100%;
+                background: repeating-linear-gradient(
+                    to bottom,
+                    transparent 0px, transparent 1px,
+                    rgba(0, 0, 0, 0.3) 2px, rgba(0, 0, 0, 0.3) 3px,
+                    rgba(255, 0, 170, 0.04) 4px, rgba(0, 243, 255, 0.04) 5px
+                );
+                pointer-events: none; z-index: 9; opacity: 0.45;
+                animation: scanline-scroll 7s linear infinite;
+            }
+            @keyframes scanline-scroll {
+                0% { background-position: 0 0; }
+                100% { background-position: 0 1000px; }
+            }
+        }
+
+        /* === Контейнер и текст === */
+        .container {
+            text-align: center; z-index: 20; padding: 1.5rem;
+            max-width: 95vw; width: 100%; position: relative;
+        }
+        .glitch-wrapper { position: relative; display: inline-block; perspective: 500px; }
+
+        /* === ГЛИТЧ === */
+        .glitch-text {
+            font-size: clamp(1.8rem, 12vw, 5rem);
+            font-weight: 200; text-transform: lowercase;
+            letter-spacing: -0.04em; color: var(--text);
+            position: relative; 
+            animation: text-pulse-extreme 4s ease-in-out infinite;
+            margin: 0 auto; line-height: 1; word-wrap: break-word;
+            text-shadow: 0 0 15px rgba(224,224,224,0.4), 0 0 35px rgba(255,51,102,0.2);
+            transform-style: preserve-3d;
+        }
+
+        @keyframes text-pulse-extreme {
+            0%, 100% { opacity: 0.9; text-shadow: 0 0 15px rgba(224,224,224,0.3), 0 0 35px rgba(255,51,102,0.15); transform: scale(1) rotateX(0deg); }
+            25% { opacity: 1; text-shadow: 0 0 25px rgba(0,243,255,0.4), 0 0 50px rgba(255,0,170,0.3), 0 0 75px rgba(255,204,0,0.2); transform: scale(1.02) rotateX(1deg); }
+            50% { opacity: 0.95; text-shadow: 0 0 20px rgba(224,224,224,0.5), 0 0 45px rgba(123,0,255,0.25); transform: scale(0.98) rotateX(-1deg); }
+            75% { opacity: 1; text-shadow: 0 0 30px rgba(255,204,0,0.35), 0 0 60px rgba(0,243,255,0.25); transform: scale(1.01) rotateX(0.5deg); }
+        }
+
+        .glitch-text::before, .glitch-text::after, .glitch-text span, .glitch-text i {
+            content: attr(data-text);
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; pointer-events: none; transform: translateZ(0);
+            will-change: transform, opacity, clip-path;
+        }
+        .glitch-text::before { color: var(--glitch-1); animation: glitch-1-extreme 1.8s infinite steps(1, end); z-index: -1; mix-blend-mode: screen; filter: blur(0.3px); }
+        .glitch-text::after { color: var(--glitch-2); animation: glitch-2-extreme 2.1s infinite steps(1, end); z-index: -2; mix-blend-mode: screen; filter: blur(0.4px); }
+        .glitch-text span { color: var(--glitch-3); animation: glitch-3-extreme 2.4s infinite steps(1, end); z-index: -3; mix-blend-mode: screen; filter: blur(0.2px); }
+        .glitch-text i { color: var(--glitch-4); animation: glitch-4-extreme 2.7s infinite steps(1, end); z-index: -4; mix-blend-mode: color-dodge; filter: blur(0.5px); }
+
+        @keyframes glitch-1-extreme {
+            0%, 100% { opacity: 0; transform: translate(0) skewX(0); clip-path: inset(0 0 98% 0); }
+            2% { opacity: 0.8; transform: translate(-6px, 2px) skewX(-3deg); clip-path: inset(10% 0 75% 0); }
+            4% { opacity: 0; }
+            14% { opacity: 0.7; transform: translate(4px, -3px) skewX(2deg); clip-path: inset(35% 0 50% 0); }
+            16% { opacity: 0; }
+            30% { opacity: 0.9; transform: translate(-3px, 4px) skewX(-1deg); clip-path: inset(55% 0 30% 0); }
+            32% { opacity: 0; }
+            50% { opacity: 0.85; transform: translate(5px, -2px) skewX(3deg); clip-path: inset(20% 0 65% 0); }
+            52% { opacity: 0; }
+            74% { opacity: 0.75; transform: translate(-4px, 3px) skewX(-2deg); clip-path: inset(70% 0 15% 0); }
+            76% { opacity: 0; }
+        }
+        @keyframes glitch-2-extreme {
+            0%, 100% { opacity: 0; transform: translate(0) skewX(0); clip-path: inset(98% 0 0 0); }
+            3% { opacity: 0.75; transform: translate(5px, -2px) skewX(2deg); clip-path: inset(25% 0 60% 0); }
+            5% { opacity: 0; }
+            20% { opacity: 0.8; transform: translate(-4px, 3px) skewX(-3deg); clip-path: inset(45% 0 40% 0); }
+            22% { opacity: 0; }
+            44% { opacity: 0.7; transform: translate(3px, -4px) skewX(1deg); clip-path: inset(15% 0 70% 0); }
+            46% { opacity: 0; }
+            64% { opacity: 0.85; transform: translate(-5px, 2px) skewX(-2deg); clip-path: inset(60% 0 25% 0); }
+            66% { opacity: 0; }
+            90% { opacity: 0.65; transform: translate(4px, -3px) skewX(3deg); clip-path: inset(30% 0 55% 0); }
+            92% { opacity: 0; }
+        }
+        @keyframes glitch-3-extreme {
+            0%, 100% { opacity: 0; transform: translate(0) scale(1) rotate(0); }
+            4% { opacity: 0.6; transform: translate(7px, 1px) scale(1.02) rotate(-1deg); }
+            7% { opacity: 0; }
+            26% { opacity: 0.75; transform: translate(-5px, -2px) scale(0.98) rotate(2deg); }
+            29% { opacity: 0; }
+            54% { opacity: 0.65; transform: translate(3px, 5px) scale(1.01) rotate(-2deg); }
+            57% { opacity: 0; }
+            80% { opacity: 0.8; transform: translate(-6px, 2px) scale(0.99) rotate(1deg); }
+            83% { opacity: 0; }
+        }
+        @keyframes glitch-4-extreme {
+            0%, 100% { opacity: 0; transform: translate(0) skewY(0); }
+            5% { opacity: 0.5; transform: translate(2px, 6px) skewY(4deg); }
+            9% { opacity: 0; }
+            34% { opacity: 0.7; transform: translate(-4px, -3px) skewY(-3deg); }
+            37% { opacity: 0; }
+            60% { opacity: 0.6; transform: translate(5px, 4px) skewY(2deg); }
+            63% { opacity: 0; }
+            88% { opacity: 0.55; transform: translate(-3px, -5px) skewY(-4deg); }
+            91% { opacity: 0; }
+        }
+
+        /* === Взаимодействие === */
+        @media (hover: hover) and (pointer: fine) {
+            .glitch-text:hover {
+                animation: glitch-hover-extreme 0.18s steps(4) forwards, text-pulse-extreme 4s ease-in-out infinite;
+                text-shadow: 0 0 20px var(--glitch-1), 0 0 40px var(--glitch-2), 0 0 60px var(--glitch-3), 0 0 80px var(--glitch-4), 0 0 100px var(--heart);
+            }
+            @keyframes glitch-hover-extreme {
+                0% { transform: translate(0) scale(1) rotateX(0); }
+                20% { transform: translate(-8px, 4px) scale(1.05) rotateX(3deg) skewX(-2deg); }
+                40% { transform: translate(7px, -5px) scale(0.95) rotateX(-4deg) skewX(3deg); }
+                60% { transform: translate(-4px, -6px) scale(1.03) rotateX(2deg) skewX(-1deg); }
+                80% { transform: translate(6px, 3px) scale(0.97) rotateX(-2deg) skewX(2deg); }
+                100% { transform: translate(0) scale(1) rotateX(0); }
+            }
+        }
+
+        @media (hover: none), (pointer: coarse) {
+            .glitch-text:active, .glitch-text.tapped {
+                animation: glitch-tap-extreme 0.12s steps(5) forwards;
+                text-shadow: 0 0 30px var(--heart), 0 0 60px var(--glitch-1), 0 0 90px var(--glitch-2);
+            }
+            @keyframes glitch-tap-extreme {
+                0% { transform: translate(0) scale(1); }
+                20% { transform: translate(-6px, 3px) scale(1.06); }
+                40% { transform: translate(5px, -4px) scale(0.94); }
+                60% { transform: translate(-3px, -5px) scale(1.04); }
+                80% { transform: translate(4px, 2px) scale(0.96); }
+                100% { transform: translate(0) scale(1); }
+            }
+        }
+
+        .glitch-text.glitch-burst {
+            animation: glitch-burst-extreme 0.08s steps(1) !important;
+            text-shadow: 0 0 40px var(--glitch-1) !important, 0 0 80px var(--glitch-2) !important, 0 0 120px var(--glitch-3) !important, 0 0 160px var(--glitch-4) !important, 0 0 200px var(--heart) !important;
+            filter: brightness(1.3) contrast(1.1);
+        }
+        @keyframes glitch-burst-extreme {
+            0% { transform: translate(0) scale(1) rotate(0); opacity: 1; }
+            16% { transform: translate(-10px, 5px) scale(1.08) rotate(-3deg) skewX(4deg); opacity: 1.1; }
+            33% { transform: translate(9px, -6px) scale(0.92) rotate(4deg) skewX(-3deg); opacity: 0.9; }
+            50% { transform: translate(-5px, -8px) scale(1.05) rotate(-2deg) skewX(2deg); opacity: 1.05; }
+            66% { transform: translate(7px, 4px) scale(0.96) rotate(3deg) skewX(-2deg); opacity: 0.95; }
+            83% { transform: translate(-4px, 6px) scale(1.03) rotate(-1deg) skewX(1deg); opacity: 1; }
+            100% { transform: translate(0) scale(1) rotate(0); opacity: 1; }
+        }
+
+        .glitch-text.tear { animation: text-tear 0.3s ease-out; }
+        @keyframes text-tear {
+            0% { clip-path: inset(0 0 0 0); }
+            25% { clip-path: inset(10% 0 15% 0); transform: translateX(-2px); }
+            50% { clip-path: inset(20% 0 10% 0); transform: translateX(3px); }
+            75% { clip-path: inset(5% 0 25% 0); transform: translateX(-1px); }
+            100% { clip-path: inset(0 0 0 0); transform: translateX(0); }
+        }
+
+        /* === Адаптация === */
+        @media (max-width: 600px) {
+            .glitch-text { letter-spacing: -0.02em; font-size: clamp(2rem, 14vw, 4rem); }
+            .container { padding: 1rem; }
+            .floating-text { font-size: 0.75rem; }
+        }
+        @media (max-width: 380px) {
+            .glitch-text { font-size: clamp(1.8rem, 16vw, 3.5rem); letter-spacing: 0; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+            .glitch-text { animation: none; filter: none; text-shadow: none; transform: none !important; }
+            .glitch-text::before, .glitch-text::after, .glitch-text span, .glitch-text i { display: none; }
+            .floating-text, .smoke-base-layer, .smoke-color-layer, .smoke-turbulence, .smoke-particles, .scanlines { display: none; }
+            .grain-overlay { opacity: 0.02; animation: none; }
+        }
+
+        @supports (padding: max(0px)) {
+            .container {
+                padding-left: max(1.5rem, env(safe-area-inset-left));
+                padding-right: max(1.5rem, env(safe-area-inset-right));
+                padding-top: max(1.5rem, env(safe-area-inset-top));
+                padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- === 🌫️ ДЫМОВЫЙ ФОН (4 слоя) === -->
+    <div class="smoke-container">
+        <div class="smoke-base-layer"></div>
+        <div class="smoke-color-layer"></div>
+        <div class="smoke-turbulence"></div>
+        <div class="smoke-particles"></div>
+    </div>
+    
+    <div class="grain-overlay"></div>
+    <div class="vignette"></div>
+    <div class="scanlines"></div>
+    <div class="background-text-layer" id="bgTextLayer"></div>
+    
+    <!-- Курсор -->
+    <div class="cursor">♥</div>
+    <div class="cursor-dot"></div>
+    
+    <div class="container">
+        <div class="glitch-wrapper">
+            <h1 class="glitch-text" data-text="love me" id="glitchText">
+                love me<span></span><i></i>
+            </h1>
+        </div>
+    </div>
+
+    <script>
+        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        const cursor = document.querySelector('.cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+        const glitchText = document.getElementById('glitchText');
+
+        // Фоновые фразы
+        const phrases = ["я люблю тебя","je t'aime","te quiero","dich liebe ich","ti amo","愛してる","사랑해요","我爱您","amo-te","minä rakastan teitä","seni seviyorum","jag älskar dej","kocham cię","mahal kita","anh yêu em","мин һине яратам"];
+
+        function createFloatingText() {
+            const container = document.getElementById('bgTextLayer');
+            if (!container) return;
+            const span = document.createElement('span');
+            span.classList.add('floating-text');
+            span.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+            span.style.left = `${Math.random() * 85 + 7.5}%`;
+            span.style.top = `${Math.random() * 85 + 7.5}%`;
+            span.style.fontSize = `${Math.random() * 0.9 + 0.5}rem`;
+            span.style.setProperty('--target-opacity', Math.random() * 0.2 + 0.1);
+            const duration = Math.random() * 12 + 12;
+            span.style.animationDuration = `${duration}s`;
+            container.appendChild(span);
+            setTimeout(() => span.remove(), duration * 1000 + 2000);
+        }
+        setInterval(createFloatingText, 1200);
+        for(let i=0; i<7; i++) setTimeout(createFloatingText, i * 200);
+
+        // Курсор с плавным следованием
+        if (!isTouchDevice && cursor) {
+            let mX=0, mY=0, cX=0, cY=0;
+            document.addEventListener('mousemove', e => { mX=e.clientX; mY=e.clientY; });
+            function animateCursor() {
+                cX += (mX - cX) * 0.15; cY += (mY - cY) * 0.15;
+                cursor.style.left = cX + 'px'; cursor.style.top = cY + 'px';
+                cursorDot.style.left = mX + 'px'; cursorDot.style.top = mY + 'px';
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+            glitchText?.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            glitchText?.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        }
+
+        // Тач
+        if (isTouchDevice && glitchText) {
+            glitchText.addEventListener('touchstart', e => { glitchText.classList.add('tapped'); if(navigator.vibrate) navigator.vibrate([15,30,15]); }, {passive:true});
+            glitchText.addEventListener('touchend', () => glitchText.classList.remove('tapped'), {passive:true});
+            glitchText.addEventListener('click', e => e.preventDefault());
+        }
+
+        // Экстремальный рандомный глитч
+        if (!isTouchDevice && glitchText) {
+            function triggerGlitch() {
+                const r = Math.random();
+                if (r > 0.98) { glitchText.classList.add('glitch-burst','tear'); if(navigator.vibrate) navigator.vibrate([20,40,20,40,20]); setTimeout(()=>glitchText.classList.remove('glitch-burst','tear'),120); }
+                else if (r > 0.90) { glitchText.classList.add('glitch-burst'); if(navigator.vibrate) navigator.vibrate([10,20,10]); setTimeout(()=>glitchText.classList.remove('glitch-burst'),90); }
+                else if (r > 0.70) { const ts=glitchText.style.textShadow; glitchText.style.textShadow=`${Math.random()*8-4}px ${Math.random()*8-4}px 0 var(--glitch-1), ${Math.random()*8-4}px ${Math.random()*8-4}px 0 var(--glitch-2)`; setTimeout(()=>glitchText.style.textShadow=ts,40); }
+            }
+            function schedule() { setTimeout(()=>{ triggerGlitch(); schedule(); }, Math.random()*1000+400); }
+            schedule();
+        }
+
+        // Блокировка зума
+        let lastEnd=0;
+        document.addEventListener('touchend', e => { if(Date.now()-lastEnd<=300) e.preventDefault(); lastEnd=Date.now(); }, {passive:false});
+
+        // Взрыв при загрузке
+        window.addEventListener('load', () => { setTimeout(()=>glitchText?.classList.add('glitch-burst','tear'),800); setTimeout(()=>glitchText?.classList.remove('glitch-burst','tear'),950); });
+
+        // Параллакс дыма
+        if (!isTouchDevice) {
+            document.addEventListener('mousemove', e => {
+                const x=(e.clientX/window.innerWidth-0.5)*15, y=(e.clientY/window.innerHeight-0.5)*15;
+                document.querySelector('.smoke-base-layer').style.transform=`translate(${x*0.3}%, ${y*0.3}%)`;
+                document.querySelector('.smoke-color-layer').style.transform=`translate(${-x*0.4}%, ${-y*0.4}%)`;
+            });
+        }
+    </script>
+</body>
+</html>
